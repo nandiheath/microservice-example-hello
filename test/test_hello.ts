@@ -1,9 +1,11 @@
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
-import { authenicate } from '../src/route';
+import { authenicate, sayHello } from '../src/route';
 import * as auth from '../src/auth/auth';
 import * as jwt from 'jsonwebtoken';
 import { JWT_SECRET } from './../src/common/env';
+import * as sinon from 'sinon';
+import * as BluebirdPromise from 'bluebird';
 
 
 const { expect } = chai;
@@ -15,11 +17,8 @@ describe('Hello Test', () => {
   let validToken = '';
 
   // Sign a valid token
-  before((done) => {
-    jwt.sign({ username }, JWT_SECRET, (token) => {
-      validToken = token;
-      done();
-    })
+  before(async () => {
+    validToken = await jwt.sign({ username }, JWT_SECRET);
   });
 
   describe('Auth', () => {
@@ -35,15 +34,29 @@ describe('Hello Test', () => {
       const token = `${validToken}_failed`;
       await expect(auth.verify(token)).to.eventually.be.rejectedWith(Error);
     });
-
-    it('Should call the callback once if the token is valid', async function() {
-      expect(false).to.be.true;
-    })
   })
 
   describe('Route', () => {
+
+
+    const mockCall = {
+      metadata: {
+        get: (key) => {
+          if (key === 'authorization') {
+            return [`Bearer ${validToken}`];
+          }
+        }
+      }
+    }
+
     it('Should call the callback once if the token is valid', async function() {
-      expect(false).to.be.true;
+      const next = sinon.spy(sayHello);
+      const callback = sinon.spy();
+
+      await authenicate(next)(mockCall, callback);
+      expect(callback.calledOnce).to.be.true;
+      expect(callback.calledWith(null, `Hello ${username}`)).to.be.true;
+
     })
 
     it('Should call the callback with error if the token is missing', async function() {

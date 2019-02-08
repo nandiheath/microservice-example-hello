@@ -21,8 +21,11 @@
   "dependencies": {
     "@grpc/proto-loader": "^0.4.0",
     "@types/node": "^10.12.21",
+    "bluebird": "^3.5.3",
+    "dotenv": "^6.2.0",
     "grpc": "^1.18.0",
     "jsonwebtoken": "^8.4.0",
+    "typescript": "^3.3.3",
     "winston": "^3.2.1"
   },
   "devDependencies": {
