@@ -1,0 +1,42 @@
+{
+  "name": "microservice-example-hello",
+  "version": "1.0.0",
+  "description": "An api microservice that expose the endpoints with HTTP and connect to another backend service using gRPC",
+  "main": "server.config.js",
+  "scripts": {
+    "test": "mocha --require ts-node/register --recursive -r dotenv/config ./test/**/*.ts dotenv_config_path=.env-test",
+    "compile": "tsc && node built/server.js",
+    "dev": "nodemon -e ts --exec \"npm run compile\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nandiheath/microservice-example-hello.git"
+  },
+  "author": "Nandi Wong",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nandiheath/microservice-example-hello/issues"
+  },
+  "homepage": "https://github.com/nandiheath/microservice-example-hello#readme",
+  "dependencies": {
+    "@grpc/proto-loader": "^0.4.0",
+    "@types/node": "^10.12.21",
+    "grpc": "^1.18.0",
+    "jsonwebtoken": "^8.4.0",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "ts-node": "^7.0.1",
+    "@types/chai-as-promised": "^7.1.0",
+    "@types/chai-http": "^3.0.5",
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^10.12.11",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "chai-http": "^4.2.0",
+    "sinon": "^7.2.3",
+    "tslint": "^5.11.0",
+    "tslint-config-airbnb": "^5.11.1"
+  }
+}
