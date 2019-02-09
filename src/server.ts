@@ -7,7 +7,7 @@ import { route } from './route';
 
 
 
-const server = new grpc.Server();
+const server:grpc.Server = new grpc.Server();
 // Add the routes
 
 logger.info(`Server running at ${SERVER_HOST}:${SERVER_PORT}`);
@@ -17,3 +17,4 @@ route(server);
 
 server.start();
 
+export default server;
