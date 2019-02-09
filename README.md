@@ -25,6 +25,8 @@ client.Hello({}, metadata, (err, data) => {
 
 ```
 
+The project is written in typescript and can be transpiled to javascript using ```tsc``` and the config file ```tsconfig.json```
+
 ## Setup for development
 
 ```javascript
@@ -34,7 +36,7 @@ npm install
 # modify the envirnment variables
 mv .env-sample .env
 
-# !! PLEASE UPDATE THE JWT_SECRET
+# !! REMEMBER TO UPDATE THE JWT_SECRET
 
 # use nodemon to monitor code changes and compile from typescript
 npm run dev
@@ -61,6 +63,12 @@ Be noticed that if any of the test failed, the build process will be terminated.
 
 To run in docker, enviroment variables should be provided otherwise default values will be used
 Enviroment variables are listed in ```.env-sample```
+
+### Exceptions
+
+The dockerized image is running with [pm2-docker](http://pm2.keymetrics.io/) , which will monitor the process and restart if process failed.
+The settings such as restart count are stored inside ```server.config.js```
+
 
 ## TODOs
 
