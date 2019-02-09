@@ -21,15 +21,20 @@ const { expect } = chai;
 
 chai.use(chaiAsPromised);
 
+interface HelloClient extends grpc.Client{
+    Hello(payload:Object, callback:Function);
+    Hello(payload:Object, metadata:grpc.Metadata, callback:Function);
+}
+
 describe('GRPC Test', () => {
-  let client:grpc.Client;
+  let client:HelloClient;
 
   beforeEach(() => {
 
     console.log('each');
     //Create gRPC client
     client = new proto.HelloService(
-      `${SERVER_HOST}:${SERVER_HOST}`,
+      `${SERVER_HOST}:${SERVER_PORT}`,
       grpc.credentials.createInsecure()
     );
   });
@@ -47,20 +52,66 @@ describe('GRPC Test', () => {
   })
 
   describe('HelloService', () => {
-    it('should return error if authorization header is not provider', () => {
-      expect(false).to.be.true;
+    const username = 'testuser_001';
+
+    it('should return error if authorization header is not provider', (done) => {
+      client.Hello({}, (err, data) => {
+        expect(err).to.be.not.null;
+        expect(err.code).to.be.eq(grpc.status.PERMISSION_DENIED);
+        expect(err).to.be.a('Error');
+        expect(err.message).to.be.contain('Unauthenicated');
+        done();
+      });
     })
 
-    it('should return error if bearer token is invalid', () => {
-      expect(false).to.be.true;
+    it('should return error if bearer token is invalid', (done) => {
+      const token:string = 'Bearer';
+      const metadata:grpc.Metadata = new grpc.Metadata();
+      metadata.add('Authorization', token);
+      client.Hello({}, metadata, (err, data) => {
+        expect(err).to.be.not.null;
+        expect(err.code).to.be.eq(grpc.status.PERMISSION_DENIED);
+        expect(err).to.be.a('Error');
+        expect(err.message).to.be.contain('Unauthenicated');
+        done();
+      });
     })
 
-    it('should return error if bearer token is expired', () => {
-      expect(false).to.be.true;
+    it('should return error if bearer token is expired', (done) => {
+      // Sign an expired token
+      jwt.sign({ username, iat: Math.floor(Date.now() / 1000) - 150 }, JWT_SECRET, {
+        expiresIn: '120s'
+      }, (err, token) => {
+        expect(err).to.be.null;
+        expect(token).to.be.not.null;
+        const metadata:grpc.Metadata = new grpc.Metadata();
+        metadata.add('Authorization', `Bearer ${token}`);
+        client.Hello({}, metadata, (err, data) => {
+          expect(err).to.be.not.null;
+          expect(err.code).to.be.eq(grpc.status.PERMISSION_DENIED);
+          expect(err).to.be.a('Error');
+          expect(err.message).to.be.contain('Unauthenicated');
+          done();
+        });
+      });
+
+
     })
 
-    it('should return the username for the Hello Service', () => {
-      expect(false).to.be.true;
+    it('should return the username for the Hello Service', (done) => {
+      jwt.sign({ username }, JWT_SECRET, (err, token) => {
+        expect(err).to.be.null;
+        expect(token).to.be.not.null;
+
+        const metadata:grpc.Metadata = new grpc.Metadata();
+        metadata.add('Authorization', `Bearer ${token}`);
+        client.Hello({}, metadata, (err, data) => {
+          expect(err).to.be.null;
+          expect(data.message).to.be.not.undefined;
+          expect(data.message).to.be.eq(`Hello ${username}`);
+          done();
+        });
+      });
     })
   });
 

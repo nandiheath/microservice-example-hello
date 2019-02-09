@@ -11,7 +11,7 @@ interface IAuthInfo {
 
 export const authenicate = (next: Function): Function => {
   return async (call: any, callback: Function): Promise<void> => {
-    const metadata:grpc.Metadata = call.metadata as grpc.Metadata;
+    const metadata: grpc.Metadata = call.metadata as grpc.Metadata;
     const header = metadata.get('authorization');
     let payload: IAuthInfo | null = null;
 
@@ -46,14 +46,16 @@ export const authenicate = (next: Function): Function => {
  * @param callback
  */
 export const sayHello = async (call: any, callback: Function, payload: IAuthInfo) => {
-  return callback(null, `Hello ${payload.username}`);
+  return callback(null, {
+    message: `Hello ${payload.username}`
+  });
 }
 
 export const route = (server: grpc.Server) => {
-    const helloDefination = loadSync('./proto/hello.proto');
-    const helloProto = grpc.loadPackageDefinition(helloDefination);
-    server.addService(helloProto.HelloService.service, {
-        hello: authenicate(sayHello)
-    });
+  const helloDefination = loadSync('./proto/hello.proto');
+  const helloProto = grpc.loadPackageDefinition(helloDefination);
+  server.addService(helloProto.HelloService.service, {
+    hello: authenicate(sayHello)
+  });
 }
 

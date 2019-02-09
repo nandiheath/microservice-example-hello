@@ -40,7 +40,7 @@ describe('Hello Test', () => {
 
 
 
-    it('Should call the callback once with the username if the token is valid', async function() {
+    it('Should call the callback once with the username if the token is valid', async function () {
       // Create the call object to simulate the param for gRPC
       const mockCall = {
         metadata: {
@@ -58,11 +58,11 @@ describe('Hello Test', () => {
 
       await authenicate(next)(mockCall, callback);
       expect(callback.calledOnce).to.be.true;
-      expect(callback.calledWith(null, `Hello ${username}`)).to.be.true;
+      expect(callback.calledWith(null, { message: `Hello ${username}` })).to.be.true;
 
     })
 
-    it('Should call the callback with error if the token is missing', async function() {
+    it('Should call the callback with error if the token is missing', async function () {
       // Create the call object to simulate the param for gRPC
       const mockCall = {
         metadata: {
@@ -85,7 +85,7 @@ describe('Hello Test', () => {
       expect(params[0].message).to.be.contain('Unauthenicated');
     })
 
-    it('Should call the callback with error if the token is invalid', async function() {
+    it('Should call the callback with error if the token is invalid', async function () {
       // Create the call object to simulate the param for gRPC
       const mockCall = {
         metadata: {
@@ -110,7 +110,7 @@ describe('Hello Test', () => {
       expect(params[0].message).to.be.contain('Unauthenicated');
     })
 
-    it('Should call the callback with error if the token is expired', async function() {
+    it('Should call the callback with error if the token is expired', async function () {
       // create a expired token
       // issue at 150s before, but will expire in 120s
       const expiredToken = await jwt.sign({ username, iat: Math.floor(Date.now() / 1000) - 150 }, JWT_SECRET, {
