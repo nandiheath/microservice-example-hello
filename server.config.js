@@ -4,6 +4,9 @@ module.exports = {
     script: './built/server.js',
     watch: false,
     max_restarts: 5,  // Maximum restart 5 times.
-    restart_delay: 1000
+    restart_delay: 1000,
+    env: {
+      "NODE_ENV": "production"
+    },
   }],
 };
