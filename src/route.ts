@@ -15,7 +15,7 @@ export const authenicate = (next: Function): Function => {
     const header = metadata.get('authorization');
     let payload: IAuthInfo | null = null;
 
-    if (header.length === 0) {
+    if (header === undefined || header.length === 0) {
       payload = null;
     } else {
       try {
