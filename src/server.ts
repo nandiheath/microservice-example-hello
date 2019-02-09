@@ -14,7 +14,24 @@ logger.info(`Server running at ${SERVER_HOST}:${SERVER_PORT}`);
 server.bind(`${SERVER_HOST}:${SERVER_PORT}`, grpc.ServerCredentials.createInsecure());
 route(server);
 
-
 server.start();
+
+process.on('SIGTERM', () => {
+  logger.info('SIGTERM signal received.');
+  shutdown();
+});
+
+process.on('SIGINT', () => {
+  logger.info('SIGINT signal received.');
+  shutdown();
+});
+
+const shutdown = () => {
+  server.tryShutdown(() => {
+    logger.info('gRPC server shutdown completely');
+    process.exit(1);
+  })
+
+}
 
 export default server;
