@@ -41,7 +41,7 @@ mv .env-sample .env
 # use nodemon to monitor code changes and compile from typescript
 npm run dev
 
-# The server will listen to 127.0.0.1:6020 as default
+# The server will listen to 0.0.0.0:6020 as default
 ```
 
 ### Logging Strategy
